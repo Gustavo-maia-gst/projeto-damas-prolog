@@ -1,90 +1,24 @@
-:- module(navigation, [handle_up/2, handle_down/2, handle_left/2, handle_right/2]).
+:- module(navigation, [moveUp/2, moveDown/2, moveLeft/2, moveRight/2]).
 
-:- use_module(utils).
-:- use_module(game_state).
+updatePosition(State, Ydiff, Xdiff, NewState) :-
+    Cursor = State.cursor,
+    Cursor = [Y, X],
+    NewY is Y + Ydiff,
+    NewX is X + Xdiff,
+    Matrix = State.matrix,
+    length(Matrix, NumRows),
+    (Matrix = [FirstRow|_] -> length(FirstRow, NumCols) ; NumCols = 0),
+    (NewY >= 0, NewY < NumRows, NewX >= 0, NewX < NumCols ->
+        NewCursor = [NewY, NewX],
+        NewState = State.put(cursor, NewCursor)
+    ;
+        NewState = State
+    ).
 
-is_valid(Line, Col) :- Line >= 0, Line =< 7, Col >= 0, Col =< 7.
+moveUp(State, NewState) :- updatePosition(State, -1, 0, NewState).
 
-handle_up(State, R) :-
-    [CursorLine, CursorCol] = State.cursor,
-    NewLine is CursorLine - 1,
-    \+ is_valid(NewLine, CursorCol),
-    R = State, !.
+moveDown(State, NewState) :- updatePosition(State, 1, 0, NewState).
 
-handle_up(State, R) :-
-    [CursorLine, CursorCol] = State.cursor,
-    NewLine is CursorLine - 1,
-    NewCursor = [NewLine, CursorCol],
+moveLeft(State, NewState) :- updatePosition(State, 0, -1, NewState).
 
-    get_cell(CursorLine, CursorCol, State, Cell),
-    LastCell = Cell.put(is_under_cursor, false),
-    set_cell(CursorLine, CursorCol, State, LastCell, State2),
-
-    get_cell(NewLine, CursorCol, State2, Cell2),
-    NewCell = Cell2.put(is_under_cursor, true),
-    set_cell(NewLine, CursorCol, State2, NewCell, State3),
-
-    R = State3.put(cursor, NewCursor).
-
-handle_down(State, R) :-
-    [CursorLine, CursorCol] = State.cursor,
-    NewLine is CursorLine + 1,
-    \+ is_valid(NewLine, CursorCol),
-    R = State, !.
-
-handle_down(State, R) :-
-    [CursorLine, CursorCol] = State.cursor,
-    NewLine is CursorLine + 1,
-    NewCursor = [NewLine, CursorCol],
-
-    get_cell(CursorLine, CursorCol, State, Cell),
-    LastCell = Cell.put(is_under_cursor, false),
-    set_cell(CursorLine, CursorCol, State, LastCell, State2),
-
-    get_cell(NewLine, CursorCol, State2, Cell2),
-    NewCell = Cell2.put(is_under_cursor, true),
-    set_cell(NewLine, CursorCol, State2, NewCell, State3),
-
-    R = State3.put(cursor, NewCursor).
-
-handle_left(State, R) :-
-    [CursorLine, CursorCol] = State.cursor,
-    NewCol is CursorCol - 1,
-    \+ is_valid(CursorLine, NewCol),
-    R = State, !.
-
-handle_left(State, R) :-
-    [CursorLine, CursorCol] = State.cursor,
-    NewCol is CursorCol - 1,
-    NewCursor = [CursorLine, NewCol],
-
-    get_cell(CursorLine, CursorCol, State, Cell),
-    LastCell = Cell.put(is_under_cursor, false),
-    set_cell(CursorLine, CursorCol, State, LastCell, State2),
-
-    get_cell(CursorLine, NewCol, State2, Cell2),
-    NewCell = Cell2.put(is_under_cursor, true),
-    set_cell(CursorLine, NewCol, State2, NewCell, State3),
-
-    R = State3.put(cursor, NewCursor).
-
-handle_right(State, R) :-
-    [CursorLine, CursorCol] = State.cursor,
-    NewCol is CursorCol + 1,
-    \+ is_valid(CursorLine, NewCol),
-    R = State, !.
-
-handle_right(State, R) :-
-    [CursorLine, CursorCol] = State.cursor,
-    NewCol is CursorCol + 1,
-    NewCursor = [CursorLine, NewCol],
-
-    get_cell(CursorLine, CursorCol, State, Cell),
-    LastCell = Cell.put(is_under_cursor, false),
-    set_cell(CursorLine, CursorCol, State, LastCell, State2),
-
-    get_cell(CursorLine, NewCol, State2, Cell2),
-    NewCell = Cell2.put(is_under_cursor, true),
-    set_cell(CursorLine, NewCol, State2, NewCell, State3),
-
-    R = State3.put(cursor, NewCursor).
+moveRight(State, NewState) :- updatePosition(State, 0, 1, NewState).
