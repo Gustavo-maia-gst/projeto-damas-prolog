@@ -1,13 +1,4 @@
-:- module(screen_wrapper, [refresh_screen/3]).
-
-
-% Constantes para os códigos ASCII das teclas
-:- dynamic key_code/2.
-key_code(w, 119).
-key_code(s, 115).
-key_code(a, 97).
-key_code(d, 100).
-key_code(q, 113).
+:- module(screen_wrapper, [refresh_matrix/3, clear_screen/0, refresh_header/3]).
 
 clear_screen :- write('\033[2J').
 move_cursor(X, Y) :- format('\033[~d;~dH', [Y, X]).
@@ -37,8 +28,27 @@ apply_color(Code) :-
 reset_formatting :-
     write('\033[0m').
 
-refresh_screen(Matrix, InitialLine, InitialColumn) :-
-    clear_screen,
+refresh_header(State, InitialLine, InitialColumn) :-
+    move_cursor(InitialColumn, InitialLine),
+    write('Turno:'),
+
+    PlayerLine is InitialLine + 1,
+    move_cursor(InitialColumn, PlayerLine),
+    (State.turn == p1 -> write('Jogador 1') ; write('Jogador 2')),
+
+    PecasHeaderLine is PlayerLine + 2,
+    move_cursor(InitialColumn, PecasHeaderLine),
+    write('Peças:'),
+
+    P1Line is PecasHeaderLine + 1,
+    move_cursor(InitialColumn, P1Line),
+    format('P1: ~d', [State.p1_count]),
+
+    P2Line is P1Line + 1,
+    move_cursor(InitialColumn, P2Line),
+    format('P2: ~d', [State.p2_count]).
+
+refresh_matrix(Matrix, InitialLine, InitialColumn) :-
     forall(nth0(Line, Matrix, LineContent), 
         forall(nth0(Column, LineContent, _),
             writeChar(Matrix, Line, Column, InitialLine, InitialColumn)

@@ -1,6 +1,6 @@
-:- module(render, [render_board/1]).
+:- module(render, [refresh/1]).
 
-:- use_module(screen_wrapper, [refresh_screen/3]).
+:- use_module(screen_wrapper, [refresh_matrix/3, refresh_header/3, clear_screen/0]).
 :- use_module('../../States/game_state'). 
 
 cell_height(1).
@@ -15,22 +15,22 @@ selected_color(0).
 cursor_bgcolor(3).
 cursor_color(0).
 
-render_board(GameState) :-
-    TermLines = 24,
-    TermCols = 80,
-
+refresh(GameState) :-
     matrix_dims(GameState, BoardRows, BoardCols),
     cell_height(CH), cell_width(CW),
     DisplayHeight is (CH + 1) * BoardRows + 1,
     DisplayWidth is (CW + 1) * BoardCols + 1,
 
-    StartLine is max(1, (TermLines - DisplayHeight) // 2),
-    StartCol is max(1, (TermCols - DisplayWidth) // 2),
+    StartLine is 2,
+    StartCol is 45,
+    HeaderStartLine is 5,
+    HeaderStartCol is 15,
 
     make_display_matrix(GameState, DisplayHeight, DisplayWidth, DisplayMatrix),
 
-    refresh_screen(DisplayMatrix, StartLine, StartCol).
-
+    clear_screen,
+    refresh_header(GameState, HeaderStartLine, HeaderStartCol),
+    refresh_matrix(DisplayMatrix, StartLine, StartCol).
 
 matrix_dims(GameState, Rows, Cols) :-
     Matrix = GameState.matrix,
