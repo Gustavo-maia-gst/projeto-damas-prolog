@@ -1,6 +1,5 @@
 :- module(screen_wrapper, [refresh_screen/3]).
 
-% :- use_module(library(readline)).
 
 % Constantes para os códigos ASCII das teclas
 :- dynamic key_code/2.
