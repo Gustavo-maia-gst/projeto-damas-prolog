@@ -1,5 +1,5 @@
 :- module(handle_selection, [handle_selection/2, close_selection/2]).
-:- use_module(utils).
+:- use_module('../utils').
 
 check_selection(State):- 
     [CursorY, CursorX] = State.cursor,
@@ -23,6 +23,3 @@ close_selection(State, R) :-
 
 close_selection(State, R) :-
     clear_selection(State, R).
-
-
-    
