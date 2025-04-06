@@ -8,7 +8,9 @@
     is_in_bounds/2, 
     get_move_directions/3,
     lock/2,
-    unlock/2
+    unlock/2,
+    set_available/4,
+    replace_in_list/4
 ]).
 
 get_cell(Line, Col, State, Cell) :-
@@ -55,6 +57,26 @@ get_move_directions(_, true, [(1, -1), (1, 1), (-1, 1), (-1, -1)]) :- !.
 get_move_directions(p2, false, [(1, -1), (1, 1)]) :- !.
 get_move_directions(p1, false, [(-1, -1), (-1, 1)]) :- !.
 get_move_directions(_, _, []).
+
+set_available(X, Y, State, NewState) :-
+    Matrix = State.matrix,
+    nth0(X, Matrix, Row),
+    nth0(Y, Row, Cell),
+
+    UpdatedCell = Cell.put(is_available, true),
+
+    replace_in_list(Y, Row, UpdatedCell, NewRow),
+
+    replace_in_list(X, Matrix, NewRow, NewMatrix),
+
+    NewState = State.put(matrix, NewMatrix).   
+
+replace_in_list(Index, List, Elem, NewList) :-
+    same_length(List, NewList),
+    append(Prefix, [_|Suffix], List),
+    length(Prefix, Index), !,
+    append(Prefix, [Elem|Suffix], NewList).
+
 
 lock(State, New_state) :-
     New_state = State.put(is_locked, true).
