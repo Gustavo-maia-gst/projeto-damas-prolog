@@ -8,7 +8,7 @@
 
 main :-
     hide_cursor,
-    show_initial_screen(Choice),
+    show_initial_screen(Choice), % Falta integrar a Choice com o modo de jogo
     make_initial_state(State),
     loop(State).
 

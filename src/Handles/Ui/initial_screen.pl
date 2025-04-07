@@ -46,8 +46,8 @@ print_centered(Text, Y) :-
     write(Text),
     flush_output.
 
-screen_width(80).
-screen_height(24).
+screen_width(150).
+screen_height(48).
 
 
 
