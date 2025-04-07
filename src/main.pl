@@ -3,6 +3,8 @@
 :- use_module('Handles/Ui/render', [render_board/1]).
 :- use_module('Handles/navigation', [moveUp/2, moveDown/2, moveLeft/2, moveRight/2]).
 :- use_module('Handles/handle_selection', [handle_selection/2]).
+:- use_module('Handles/handle_action', [handle_action/2]).
+
 
 main :-
     hide_cursor,
@@ -15,7 +17,7 @@ loop(State) :-
     char_code(Input, Code),
     ( Input = 'q' -> (show_cursor, halt)
     ; update_state(Input, State, NewState),
-      loop(NewState)
+    loop(NewState)
     ).
 
 update_state(Command, State, NewState) :-
@@ -23,6 +25,7 @@ update_state(Command, State, NewState) :-
     ; Command = 'a' -> moveLeft(State, NewState)
     ; Command = 's' -> moveDown(State, NewState)
     ; Command = 'd' -> moveRight(State, NewState)
+    ; Command = '\r' -> handle_action(State, NewState)
     ; NewState = State
     ).
 
