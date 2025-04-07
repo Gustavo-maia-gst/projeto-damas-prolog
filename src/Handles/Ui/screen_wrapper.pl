@@ -1,4 +1,4 @@
-:- module(screen_wrapper, [refresh_matrix/3, clear_screen/0, refresh_header/3]).
+:- module(screen_wrapper, [refresh_matrix/3, clear_screen/0, refresh_header/3, move_cursor/2]).
 
 clear_screen :- write('\033[2J').
 move_cursor(X, Y) :- format('\033[~d;~dH', [Y, X]).

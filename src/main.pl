@@ -3,9 +3,12 @@
 :- use_module('Handles/Ui/render', [refresh/1]).
 :- use_module('Handles/navigation', [moveUp/2, moveDown/2, moveLeft/2, moveRight/2]).
 :- use_module('Handles/handle_selection', [handle_selection/2]).
+:- use_module('Handles/Ui/initial_screen', [show_initial_screen/1]).
+
 
 main :-
     hide_cursor,
+    show_initial_screen(Choice), % Falta integrar a Choice com o modo de jogo
     make_initial_state(State),
     loop(State).
 
