@@ -64,5 +64,3 @@ check_direction(X, Y, _, Player, (DX, DY), State, NewState) :-
 check_direction(_, _, _, _, _, State, State) :- !.  
 
 
-
-

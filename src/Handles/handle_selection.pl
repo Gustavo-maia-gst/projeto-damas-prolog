@@ -17,7 +17,6 @@ handle_selection(State, R) :-
 handle_selection(State, R) :-
     [CursorY, CursorX] = State.cursor,
     N_state = State.put(selected, [CursorY, CursorX]),
-    R = N_state,
     find_valid_moves(N_state, false, R).
 
 close_selection(State, R) :-
@@ -25,3 +24,4 @@ close_selection(State, R) :-
 
 close_selection(State, R) :-
     clear_selection(State, R).
+
