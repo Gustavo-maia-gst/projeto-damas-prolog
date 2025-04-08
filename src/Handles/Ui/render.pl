@@ -2,6 +2,7 @@
 
 :- use_module(screen_wrapper, [refresh_screen/3]).
 :- use_module('../../States/game_state'). 
+:- use_module('utils'). 
 
 cell_height(1).
 cell_width(3).
@@ -83,8 +84,7 @@ get_cell_content_char(I, J, GameState, (Char, BgColor, Color)) :-
     cell_height(CH), cell_width(CW),
     CellLine is I div (CH + 1),
     CellCol is J div (CW + 1),
-    nth0(CellLine, GameState.matrix, RowContent),
-    nth0(CellCol, RowContent, Cell),
+    get_cell(CellLine, CellCol, GameState, Cell),
 
     [CursorLine, CursorCol] = GameState.cursor,
     

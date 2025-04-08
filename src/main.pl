@@ -13,6 +13,23 @@ main :-
 
 loop(State) :-
     render_board(State),
+    maplist(
+        [Row] >> (
+            maplist(
+                [Cell] >> (
+                    (is_dict(Cell), get_dict(is_selected, Cell, Selected) -> 
+                        write(Selected)
+                    ;
+                        write('-')
+                    ),
+                    write(' ')
+                ),
+                Row
+            ),
+            nl
+        ),
+        State.matrix
+    ),
     get_single_char(Code),
     char_code(Input, Code),
     ( Input = 'q' -> (show_cursor, halt)
@@ -25,7 +42,7 @@ update_state(Command, State, NewState) :-
     ; Command = 'a' -> moveLeft(State, NewState)
     ; Command = 's' -> moveDown(State, NewState)
     ; Command = 'd' -> moveRight(State, NewState)
-    ; Command = '\r' -> handle_action(State, NewState)
+    ; Command = ' ' -> handle_action(State, NewState)
     ; NewState = State
     ).
 
