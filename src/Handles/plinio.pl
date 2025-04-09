@@ -1,6 +1,6 @@
 :- module(plinio, [handle_turn/2]).
 :- use_module('../utils').
-:- use_module('handle_movement').
+:- use_module('./handle_movement').
 :- use_module(library(lists)).
 
 
