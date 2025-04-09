@@ -104,17 +104,20 @@ get_cell_content_char(I, J, GameState, (Char, BgColor, Color)) :-
     
     MiddleRowOffset is (CH + 1) // 2,
     MiddleColOffset is (CW + 1) // 2,
-    
-    
-    (   I mod (CH + 1) =:= MiddleRowOffset,
-        J mod (CW + 1) =:= MiddleColOffset,
+
+    (   
         Cell.player \= none
     ->  (   Cell.is_king == true
             -> (   Cell.player == p1 -> Char = '◉'
                 ;   Cell.player == p2 -> Char = '◍'
                 )
-            ;   (   Cell.player == p1 -> Char = '●'
-                ;   Cell.player == p2 -> Char = '○'
+            ;   (   
+                    I mod (CH + 1) =:= MiddleRowOffset,
+                    J mod (CW + 1) =:= MiddleColOffset -> (
+                        Cell.player == p1 -> Char = '●'
+                        ;   Cell.player == p2 -> Char = '○'
+                    ) ; 
+                    Char = ' '
                 )
         )
     ;   Char = ' '
