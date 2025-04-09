@@ -87,11 +87,17 @@ get_cell_content_char(I, J, GameState, (Char, BgColor, Color)) :-
     nth0(CellCol, RowContent, Cell),
 
     [CursorLine, CursorCol] = GameState.cursor,
+
+    % Verificar se a célula está selecionada
+    IsSelected = (GameState.selected \= none, 
+                 GameState.selected = [SelLine, SelCol], 
+                 CellLine =:= SelLine, 
+                 CellCol =:= SelCol),
+
     
-    
-    (   (CellLine =:= CursorLine, CellCol =:= CursorCol) -> cursor_bgcolor(BgColor), cursor_color(Color)
-    ;   Cell.is_selected == true     -> selected_bgcolor(BgColor), selected_color(Color)
-    ;   Cell.is_available == true    -> available_bgcolor(BgColor), available_color(Color)
+    (   (CellLine =:= CursorLine, CellCol =:= CursorCol)    -> cursor_bgcolor(BgColor), cursor_color(Color)
+    ;   IsSelected                                          -> selected_bgcolor(BgColor), selected_color(Color)
+    ;   Cell.is_available == true                           -> available_bgcolor(BgColor), available_color(Color)
     ;   base_bgcolor(BgColor), base_color(Color)
     ),
     
@@ -106,11 +112,9 @@ get_cell_content_char(I, J, GameState, (Char, BgColor, Color)) :-
     ->  (   Cell.is_king == true
             -> (   Cell.player == p1 -> Char = '◉'
                 ;   Cell.player == p2 -> Char = '◍'
-                ;   Char = 'K'
                 )
             ;   (   Cell.player == p1 -> Char = '●'
                 ;   Cell.player == p2 -> Char = '○'
-                ;   Char = '?'
                 )
         )
     ;   Char = ' '

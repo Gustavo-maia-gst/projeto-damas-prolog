@@ -22,7 +22,9 @@ loop(State) :-
     ).
 
 update_state(Command, State, NewState) :-
-    ( Command = 'w' -> moveUp(State, NewState)
+    ( 
+      Command = ' ' -> handle_selection(State, NewState)
+    ; Command = 'w' -> moveUp(State, NewState)
     ; Command = 'a' -> moveLeft(State, NewState)
     ; Command = 's' -> moveDown(State, NewState)
     ; Command = 'd' -> moveRight(State, NewState)

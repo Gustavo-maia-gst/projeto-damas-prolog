@@ -27,7 +27,6 @@ make_cell(I, J, Cell) :-
 
 make_empty_cell(Cell) :-
     Cell = cell{
-        is_selected: false,
         is_available: false,
         player: none,
         is_king: false
@@ -35,7 +34,6 @@ make_empty_cell(Cell) :-
 
 make_cell_with_player(Player, Cell) :-
     Cell = cell{
-        is_selected: false,
         is_available: false,
         player: Player,
         is_king: false
