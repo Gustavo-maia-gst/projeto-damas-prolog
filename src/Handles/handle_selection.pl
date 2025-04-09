@@ -1,7 +1,6 @@
 :- module(handle_selection, [handle_selection/2, close_selection/2]).
 :- use_module('../utils').
-:- use_module('../movement_finder').
-
+:- use_module('../movement_finder', [find_valid_moves/3]).
 
 
 check_selection(State):- 
@@ -22,11 +21,12 @@ make_selection(State, R) :-
 make_selection(State, R) :-
     [CursorY, CursorX] = State.cursor,
     N_state = State.put(selected, [CursorY, CursorX]),
-    R = N_state.
-    % find_valid_moves(N_state, false, R).
+    find_valid_moves(N_state, false, R).
 
 close_selection(State, R) :-
     State.is_locked == true, R = State, !.
 
 close_selection(State, R) :-
     clear_selection(State, R).
+
+

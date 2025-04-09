@@ -1,58 +1,60 @@
+:- module(plinio, [handle_turn/2]).
 :- use_module('../utils').
+:- use_module('handle_movement').
 :- use_module(library(lists)).
 
 
 handle_turn(State, R) :-
     explore(State, R1),
-    R1 = (Updated_state, _),
-    R = Updated_state.put(turn, p1).
+    R = R1.put(turn, p1).
 
 possible_cells(State, R) :-
-    findall((I,J), 
+    findall([I,J], 
         (between(0, 7, I),
          between(0, 7, J),
          get_cell(I, J, State, Cell),
          Cell.player == p2),
         R).
 
-acc_state(State, (I,J), (Best_state_now, Best_score_now), (Best_state_next, Best_score_next)) :-
-    get_best(State, (I,J), (New_state, Score)),
-    (Score > Best_score_now ->
-        Best_state_next = New_state,
-        Best_score_next = Score
-    ; Best_state_next = Best_state_now, Best_score_next = Best_score_now).
+acc_state(State, [], (State, Worst_score)):-
+    worst_score(Worst_score).
 
-explore(State, R) :-
+acc_state(State, [[I,J] | T], (Best_state, Best_score)) :-
+    acc_state(State, T, (Best_state_next, Best_score_next)),
+    get_best(State, [I,J], (New_state, Score)),
+    (Score > Best_score_next ->
+        Best_state = New_state,
+        Best_score = Score
+    ; 
+        Best_state = Best_state_next, 
+        Best_score = Best_score_next).
+
+explore(State, R2) :-
     possible_cells(State, Cells),
-    worst_score(Worst),
-    foldl(acc_state(State), Cells, (State, Worst), (Best_state, Best_score)),
-    R = (Best_state, Best_score).
+    acc_state(State, Cells, (Best_state, _)),
+    R2 = Best_state.
 
-get_best(State, (I,J), (New_state, Score)) :-
+get_best(State, [I,J], (New_state, Score)) :-
     State_with_selected = State.put(selected, [I,J]),
-    possible_moves(State_with_selected, (I,J), Moves),
+    possible_moves(State_with_selected, [I,J], Moves),
     (length(Moves, 0) -> New_state = State_with_selected, worst_score(Score);
-    get_best_loop(State_with_selected, 0, Moves, New_state, Score)).
+    get_best_loop(State_with_selected, Moves, New_state, Score)).
 
-get_best_loop(State, Index, Moves, New_state, Score) :-
-    length(Moves, Moves_size),
-    Index =:= Moves_size,
+get_best_loop(State, [], New_state, Score) :-
     New_state = State,
     worst_score(Score), !.
 
-get_best_loop(State, Index, Moves, New_state, Score) :-
-    nth0(Index, Moves, Move),
+get_best_loop(State, [Move| T], New_state, Score) :-
     make_move(State, Move, Move_state),
     get_score(Move_state, Move_state_score),
-    Index1 is Index + 1,
-    get_best_loop(Move_state, Index1, Moves, Loop_state, Loop_state_score),
+    get_best_loop(State, T, Loop_state, Loop_state_score),
     (Move_state_score > Loop_state_score ->
         New_state = Move_state,
         Score = Move_state_score
     ; New_state = Loop_state,
         Score = Loop_state_score).
 
-make_move(State, (I,J,Eating), New_state) :-
+make_move(State, [I,J,Eating], New_state) :-
     State_with_cursor = State.put(cursor, [I,J]),
     move_wrapper(State_with_cursor, State_aux),
     (Eating == true -> try_keep_eating(State_aux, New_state);
@@ -63,27 +65,27 @@ move_wrapper(State, New_state) :-
     destroyer(Clean_state, State_aux0),
     move(State_aux0, State_aux1),
     set_all_cells_unavailable(State_aux1, State_aux2),
-    State_aux3 = State_aux2.put(cursor, none),
+    State_aux3 = State_aux2.put(selected, none),
     unlock(State_aux3, New_state).
     
 try_keep_eating(State, New_state) :-
     [I,J] = State.cursor,
     possible_moves(State, [I,J], Moves),
-    findall((Y,X,Eating), (member((Y,X,Eating), Moves), Eating == true), Eating_moves),
+    findall([Y,X,Eating], (member([Y,X,Eating], Moves), Eating == true), Eating_moves),
     (length(Eating_moves, 0) -> New_state = State;
     
-    nth0(0, Eating_moves, (New_i,New_j,_)),
+    nth0(0, Eating_moves, [New_i,New_j,_]),
     State_aux0 = State.put(selected, [I, J]),
     State_aux1 = State_aux0.put(cursor, [New_i, New_j]),
-    make_move(State_aux1, (New_i, New_j,true), R1),
+    make_move(State_aux1, [New_i, New_j,true], R1),
     New_state = R1).
 
-possible_moves(State, (I,J), Moves) :-
+possible_moves(State, [I,J], Moves) :-
     get_cell(I, J, State, Cell),
     Cell.player == none, 
     Moves = [],!.
 
-possible_moves(State, (I,J), Moves) :-
+possible_moves(State, [I,J], Moves) :-
     get_cell(I, J, State, Cell),
     Cell.player == p2,
     get_move_directions(Cell.player, Cell.is_king, Directions),
@@ -93,7 +95,7 @@ possible_moves(State, (I,J), Moves) :-
         Moves).
 
 
-direction_move(State, I, J, Di, Dj, (JumpI, JumpJ, true)) :-
+direction_move(State, I, J, Di, Dj, [JumpI, JumpJ, true]) :-
     StepI is I + Di,
     StepJ is J + Dj,
     JumpI is I + 2 * Di,
@@ -105,7 +107,7 @@ direction_move(State, I, J, Di, Dj, (JumpI, JumpJ, true)) :-
     get_cell(JumpI, JumpJ,State, Cell2),
     is_empty(Cell2), !.
 
-direction_move(State, I, J, Di, Dj, (StepI, StepJ, false)) :-
+direction_move(State, I, J, Di, Dj, [StepI, StepJ, false]) :-
     StepI is I + Di,
     StepJ is J + Dj,
     is_in_bounds(StepI, StepJ),
