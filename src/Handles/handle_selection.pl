@@ -25,3 +25,4 @@ close_selection(State, R) :-
 close_selection(State, R) :-
     clear_selection(State, R).
 
+
