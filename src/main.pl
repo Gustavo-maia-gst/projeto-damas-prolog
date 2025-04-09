@@ -13,11 +13,12 @@ main :-
     loop(State).
 
 loop(StateIn) :-
-    (StateIn.turn == p2 -> 
-        handle_turn(StateIn, State)
-    ; 
-        State = StateIn
-    ),
+    % (StateIn.turn == p2 -> 
+    %     handle_turn(StateIn, State)
+    % ; 
+    %     State = StateIn
+    % ),
+    State = StateIn,
     render_board(State),
 
     get_single_char(Code),
