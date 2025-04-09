@@ -10,7 +10,7 @@ loop(StateAux, Choice) :-
         handle_turn(StateAux, State)
     ;
         State = StateAux),
-        
+    check_end_game(State),
     refresh(State),
     get_single_char(Code),
     char_code(Input, Code),
@@ -38,3 +38,18 @@ update_state(Command, Code, State, NewState) :-
     
     ; NewState = State
     ).
+
+check_end_game(State) :-
+    P1Count = State.p1_count,
+    P2Count = State.p2_count,
+    ( P1Count =:= 0 ->
+        print_end("Jogador 2")
+    ; P2Count =:= 0 ->
+        print_end("Jogador 1")
+    ; true
+    ).
+
+print_end(Winner) :-
+    hide_cursor,
+    format("~n~w Ganhou!! 🥳🥳~n", [Winner]),
+    halt.
