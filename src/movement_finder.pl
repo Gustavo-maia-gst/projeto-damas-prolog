@@ -62,5 +62,3 @@ check_direction(X, Y, _, Player, (DX, DY), State, NewState) :-
     set_available(JumpX, JumpY, State, NewState), !.
 
 check_direction(_, _, _, _, _, State, State) :- !.  
-
-
