@@ -10,8 +10,8 @@ loop(StateAux, Choice) :-
         handle_turn(StateAux, State)
     ;
         State = StateAux),
-    check_end_game(State),
     refresh(State),
+    check_end_game(State),
     get_single_char(Code),
     char_code(Input, Code),
     ( Input = 'q' -> (show_cursor, halt)
