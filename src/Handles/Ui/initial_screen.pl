@@ -13,11 +13,11 @@ loop_menu(CursorPos, Choice) :-
     get_single_char(Code),
     char_code(Input, Code),
     (
-        ( (Input = 'w')) -> 
+        ( (Input = 'w') ; (Code = 65)) -> 
             NewCursorPos is max(0, CursorPos - 1),
             loop_menu(NewCursorPos, Choice)
 
-    ;   ( (Input = 's')) ->
+    ;   ( (Input = 's') ; (Code = 66)) ->
             NewCursorPos is min(2, CursorPos + 1),
             loop_menu(NewCursorPos, Choice)
 

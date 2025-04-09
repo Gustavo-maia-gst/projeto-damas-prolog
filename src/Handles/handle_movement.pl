@@ -55,6 +55,5 @@ nxt_state(State, NewState) :-
     (\+ has_available_move(State) ; State.is_locked == false),
     set_selected(State, none, State1),
     change_turn(State1, State2),
-    Matrix = State.get(matrix),
     set_all_cells_unavailable(State2, State3),
     unlock(State3, NewState).

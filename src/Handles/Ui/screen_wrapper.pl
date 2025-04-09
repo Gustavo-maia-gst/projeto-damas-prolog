@@ -1,4 +1,4 @@
-:- module(screen_wrapper, [refresh_matrix/3, clear_screen/0, refresh_header/3, move_cursor/2]).
+:- module(screen_wrapper, [refresh_matrix/3, clear_screen/0, refresh_header/3, move_cursor/2, hide_cursor/0, show_cursor/0]).
 
 clear_screen :- write('\033[2J').
 move_cursor(X, Y) :- format('\033[~d;~dH', [Y, X]).
@@ -73,3 +73,6 @@ writeChar(Matrix, Line, Column, InitialLine, InitialColumn) :-
 
     reset_formatting.
 
+
+hide_cursor :- format('~s', ['\033[?25l']), flush_output.
+show_cursor :- format('~s', ['\033[?25h']), flush_output.
