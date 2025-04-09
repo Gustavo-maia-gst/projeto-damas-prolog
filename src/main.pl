@@ -4,6 +4,7 @@
 :- use_module('Handles/navigation', [moveUp/2, moveDown/2, moveLeft/2, moveRight/2]).
 :- use_module('Handles/handle_selection', [handle_selection/2]).
 :- use_module('Handles/handle_action', [handle_action/2]).
+:- use_module('Handles/plinio', [handle_turn/2]).
 
 
 main :-
@@ -11,25 +12,14 @@ main :-
     make_initial_state(State),
     loop(State).
 
-loop(State) :-
-    render_board(State),
-    maplist(
-        [Row] >> (
-            maplist(
-                [Cell] >> (
-                    (is_dict(Cell), get_dict(is_selected, Cell, Selected) -> 
-                        write(Selected)
-                    ;
-                        write('-')
-                    ),
-                    write(' ')
-                ),
-                Row
-            ),
-            nl
-        ),
-        State.matrix
+loop(StateIn) :-
+    (StateIn.turn == p2 -> 
+        handle_turn(StateIn, State)
+    ; 
+        State = StateIn
     ),
+    render_board(State),
+
     get_single_char(Code),
     char_code(Input, Code),
     ( Input = 'q' -> (show_cursor, halt)

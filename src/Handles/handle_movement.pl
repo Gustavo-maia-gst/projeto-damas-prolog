@@ -49,7 +49,7 @@ handle_movement(State, NewState) :-
 
 nxt_state(State, LockedState) :-
     State.is_locked == true,
-    writeln('Matriz recebida em set_all_cells_unavailable:'),
+    % writeln('Matriz recebida em set_all_cells_unavailable:'),
     has_available_move(State),
     lock(State, LockedState).
 
@@ -57,8 +57,8 @@ nxt_state(State, NewState) :-
     (\+ has_available_move(State) ; State.is_locked == false),
     set_selected(State, none, State1),
     change_turn(State1, State2),
-    writeln('Matriz recebida em set_all_cells_unavailable:'),
+    % writeln('Matriz recebida em set_all_cells_unavailable:'),
     Matrix = State.get(matrix),
-    writeln(Matrix),
+    % writeln(Matrix),
     set_all_cells_unavailable(State2, State3),
     unlock(State3, NewState).
