@@ -4,6 +4,7 @@
 :- use_module('Handles/handle_action', [handle_action/2]).
 :- use_module('Handles/navigation', [moveUp/2, moveDown/2, moveLeft/2, moveRight/2]).
 :- use_module('Handles/Ui/render', [refresh/1]).
+:- use_module('Handles/Ui/screen_wrapper', [refresh_matrix/3, refresh_header/3, clear_screen/0]).
 
 loop(StateAux, Choice) :-
     ((Choice =:= 1, StateAux.turn == p2) ->
@@ -11,7 +12,7 @@ loop(StateAux, Choice) :-
     ;
         State = StateAux),
     refresh(State),
-    check_end_game(State),
+    check_end_game(Choice, State),
     get_single_char(Code),
     char_code(Input, Code),
     ( Input = 'q' -> (show_cursor, halt)
@@ -39,11 +40,14 @@ update_state(Command, Code, State, NewState) :-
     ; NewState = State
     ).
 
-check_end_game(State) :-
+check_end_game(Choice, State) :-
     P1Count = State.p1_count,
     P2Count = State.p2_count,
     ( P1Count =:= 0 ->
-        print_end("Jogador 2")
+        ( Choice =:= 1 ->
+            print_end("Plínio")
+        ; print_end("Jogador 2")
+        )
     ; P2Count =:= 0 ->
         print_end("Jogador 1")
     ; true
@@ -51,5 +55,6 @@ check_end_game(State) :-
 
 print_end(Winner) :-
     hide_cursor,
+    clear_screen,
     format("~n~w Ganhou!! 🥳🥳~n", [Winner]),
     halt.
