@@ -17,3 +17,5 @@ Para rodar o programa, basta rodar o comando
 swipl -s src/main.pl                                    # Abre o interpretador do Prolog e carrega o arquivo main.pl
 main.                                                   # Executa o predicado principal.
 ```
+
+Para melhor experiência recomendamos usar o terminal em modo de tela cheia.
